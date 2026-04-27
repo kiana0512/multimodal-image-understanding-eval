@@ -1,0 +1,10 @@
+manifest_path: data/sample_manifest.csv
+image_column: image_path
+text_column: text
+model_name: ViT-B-32
+batch_size: 8
+device: auto
+output_dir: outputs/retrieval
+feature_dir: outputs/features
+top_k: 3
+normalize: true

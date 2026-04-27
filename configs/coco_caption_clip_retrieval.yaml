@@ -1,0 +1,14 @@
+manifest_path: data/processed/coco_caption/coco_caption_manifest.csv
+image_column: image_path
+text_column: text
+model_name: ViT-B-32
+batch_size: 16
+device: auto
+output_dir: outputs/retrieval
+feature_dir: outputs/features/coco_caption
+top_k: 5
+normalize: true
+topk_output_name: coco_caption_text_to_image_topk.csv
+metrics_output_name: coco_caption_retrieval_metrics.json
+image_feature_name: image_features.npy
+text_feature_name: text_features.npy

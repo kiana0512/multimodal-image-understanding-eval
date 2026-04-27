@@ -1,0 +1,3 @@
+image_path,asset_id,asset_type,style_tag,prompt,negative_prompt,seed,model_name,split,source
+assets/characters/char_001.png,char_001,character,anime,"blue hair healer character","low quality",1234,sdxl,val,local_comfyui
+assets/icons/sword_001.png,sword_001,ui_icon,fantasy,"fantasy sword icon","blurry",5678,sdxl,val,local_comfyui

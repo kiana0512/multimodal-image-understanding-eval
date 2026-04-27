@@ -1,0 +1,7 @@
+manifest_path: data/sample_prompts.csv
+image_column: image_path
+asset_id_column: asset_id
+asset_type_column: asset_type
+style_column: style_tag
+output_dir: outputs/game_asset_eval
+consistency_threshold: 0.75

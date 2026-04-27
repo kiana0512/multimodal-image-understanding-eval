@@ -1,0 +1,6 @@
+manifest_path: data/processed/oxford_pet/oxford_pet_segmentation_manifest.csv
+gt_mask_column: gt_mask_path
+pseudo_mask_column: pred_mask_path
+threshold: 0.5
+min_quality_score: 0.6
+output_dir: outputs/segmentation_eval

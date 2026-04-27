@@ -1,0 +1,3 @@
+image_path,prompt,negative_prompt,style_tag,asset_type,asset_id,seed,model_name,split
+data/toy_images/character_001.png,"anime girl, blue hair, game character","low quality",anime,character,char_001,1234,placeholder_model,val
+data/toy_images/sword_icon_001.png,"fantasy sword icon, clean ui","blurry",fantasy,ui_icon,sword_001,5678,placeholder_model,val

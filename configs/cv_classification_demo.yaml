@@ -1,0 +1,13 @@
+dataset_name: CIFAR10
+data_root: data/downloads
+model_name: resnet18
+num_classes: 10
+epochs: 1
+batch_size: 16
+lr: 0.001
+image_size: 64
+output_dir: outputs/classification
+use_pretrained: false
+download: false
+max_samples: 128
+device: auto

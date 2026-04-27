@@ -1,0 +1,13 @@
+torch
+torchvision
+numpy
+pandas
+pillow
+opencv-python
+scikit-learn
+matplotlib
+tqdm
+pyyaml
+rich
+# Optional dependencies: open_clip_torch transformers faiss-cpu gradio
+pytest

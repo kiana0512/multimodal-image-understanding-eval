@@ -1,0 +1,14 @@
+manifest_path: data/processed/game_assets/game_asset_manifest.csv
+prompt_column: prompt
+image_column: image_path
+style_column: style_tag
+asset_type_column: asset_type
+clip_weight: 0.35
+blur_weight: 0.20
+brightness_weight: 0.15
+diversity_weight: 0.10
+duplicate_threshold: 0.98
+output_dir: outputs/quality_eval
+score_output_name: game_asset_quality_scores.csv
+badcase_output_name: game_asset_badcases.csv
+badcase_report_name: game_asset_badcase_report.md

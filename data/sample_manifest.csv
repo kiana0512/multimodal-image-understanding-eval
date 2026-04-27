@@ -1,0 +1,5 @@
+image_path,text,label,split,source
+data/toy_images/cat_001.jpg,a cute cat sitting on the sofa,cat,train,toy
+data/toy_images/dog_001.jpg,a dog running on the grass,dog,val,toy
+data/toy_images/sword_icon_001.png,"fantasy sword icon, clean ui",ui_icon,val,toy
+data/toy_images/character_001.png,anime game character concept art,character,val,toy

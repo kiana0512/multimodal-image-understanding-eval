@@ -1,0 +1,2 @@
+image_path,gt_mask_path,pred_mask_path,split,dataset
+data/toy_images/placeholder_image.png,data/toy_masks/gt_001.png,data/toy_masks/pred_001.png,val,woundseg_toy
