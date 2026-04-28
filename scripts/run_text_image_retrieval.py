@@ -35,12 +35,22 @@ def main() -> None:
     caption_id_col = cfg.get("caption_id_column")
     image_features = np.load(_feature_path(cfg, "image_feature_path", "image_feature_name", "image_features.npy"))
     text_features = np.load(_feature_path(cfg, "text_feature_path", "text_feature_name", "text_features.npy"))
-    scores = compute_text_to_image_scores(text_features, image_features)
     topk_path = Path(cfg.get("topk_csv", out / cfg.get("topk_output_name", "text_to_image_topk.csv")))
     metrics_path = Path(cfg.get("metrics_json", out / cfg.get("metrics_output_name", "retrieval_metrics.json")))
 
     if image_id_col and image_id_col in df.columns:
         gallery_df = df.drop_duplicates(subset=[image_id_col]).reset_index(drop=True)
+        if image_features.shape[0] != len(gallery_df):
+            raise ValueError(
+                f"Image feature count ({image_features.shape[0]}) does not match unique gallery images ({len(gallery_df)}). "
+                "Regenerate features after rebuilding the manifest."
+            )
+        if text_features.shape[0] != len(df):
+            raise ValueError(
+                f"Text feature count ({text_features.shape[0]}) does not match caption rows ({len(df)}). "
+                "Regenerate features after rebuilding the manifest."
+            )
+        scores = compute_text_to_image_scores(text_features, image_features)
         export_text_image_topk(
             scores,
             df,
@@ -57,6 +67,9 @@ def main() -> None:
         positives = query_ids[:, None] == gallery_ids[None, :]
         metrics = summarize_retrieval_by_positives(scores, positives, ks=(1, min(5, scores.shape[1]), min(10, scores.shape[1])))
     else:
+        if image_features.shape[0] != len(df) or text_features.shape[0] != len(df):
+            raise ValueError("Feature counts must match manifest rows when image_id_column is unavailable.")
+        scores = compute_text_to_image_scores(text_features, image_features)
         ids = df[image_col].astype(str).tolist()
         export_topk(scores, ids, ids, topk_path, k=int(cfg.get("top_k", 5)))
         metrics = summarize_retrieval(scores, list(range(len(df))), ks=(1, min(5, len(df))))

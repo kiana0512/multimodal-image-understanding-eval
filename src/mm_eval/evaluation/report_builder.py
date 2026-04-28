@@ -37,7 +37,22 @@ def _json_metrics(path: str | Path | None) -> str:
     rows = [{"metric": key, "value": value} for key, value in data.items()]
     return _markdown_table(pd.DataFrame(rows))
 
-def build_markdown_report(title: str = "Experiment Report", retrieval_csv: str | Path | None = None, quality_csv: str | Path | None = None, segmentation_csv: str | Path | None = None, config_path: str | Path | None = None, retrieval_metrics_json: str | Path | None = None) -> str:
+
+def _figure_links(figures: list[str | Path] | None) -> str:
+    """Render report figure links."""
+    if not figures:
+        return "Not provided."
+    lines = []
+    for figure in figures:
+        path = Path(figure)
+        if path.exists():
+            lines.append(f"- `{path}`")
+        else:
+            lines.append(f"- Not found: `{path}`")
+    return "\n".join(lines)
+
+
+def build_markdown_report(title: str = "Experiment Report", retrieval_csv: str | Path | None = None, quality_csv: str | Path | None = None, segmentation_csv: str | Path | None = None, config_path: str | Path | None = None, retrieval_metrics_json: str | Path | None = None, figures: list[str | Path] | None = None) -> str:
     """Build a markdown report string from optional CSV outputs."""
     now=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     return f"""# {title}
@@ -57,6 +72,10 @@ Status: placeholder / demo result unless explicitly replaced by real experiment 
 ## Retrieval Metrics
 
 {_json_metrics(retrieval_metrics_json)}
+
+## Figures
+
+{_figure_links(figures)}
 
 ## AIGC Quality Scores
 

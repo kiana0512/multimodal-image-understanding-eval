@@ -19,6 +19,7 @@ def pairwise_cosine_similarity(image_features: np.ndarray, text_features: np.nda
 def topk_indices(scores: np.ndarray, k: int = 5) -> np.ndarray:
     """Return descending Top-K indices for a vector or matrix."""
     arr=np.asarray(scores)
+    k = min(k, arr.shape[-1])
     if arr.ndim == 1: return np.argsort(-arr)[:k]
     return np.argsort(-arr,axis=1)[:,:k]
 

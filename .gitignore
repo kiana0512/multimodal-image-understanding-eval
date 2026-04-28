@@ -17,8 +17,6 @@ data/processed/
 data/downloads/
 data/cache/
 .cache/
-hf_cache/
-modelscope_cache/
 wandb/
 runs/
 .DS_Store

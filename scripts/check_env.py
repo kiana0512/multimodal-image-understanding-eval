@@ -41,17 +41,15 @@ def main() -> None:
             print(f"CUDA device 0: {torch.cuda.get_device_name(0)}")
 
     for module, name, purpose in [
-        ("torchvision", "torchvision", "Oxford Pet download and CV demos"),
+        ("torchvision", "torchvision", "image transforms used by CLIP dependencies"),
+        ("cv2", "opencv-python / cv2", "required for Oxford Pet mask IO and segmentation metrics"),
         ("open_clip", "open_clip", "required for CLIP retrieval feature extraction"),
-        ("datasets", "datasets", "required for HuggingFace dataset loading"),
-        ("huggingface_hub", "huggingface_hub", "HF snapshot/cache utilities"),
-        ("modelscope", "modelscope", "required for ModelScope dataset loading"),
         ("mm_eval", "mm_eval", "local project package"),
     ]:
         _, msg = check_import(module, name, purpose)
         print(msg)
 
-    print("\nIf optional packages are missing, install them only when the related dataset/model flow is needed.")
+    print("\nOfficial COCO2014 download uses urllib/aria2c and does not require HF or ModelScope packages.")
 
 
 if __name__ == "__main__":

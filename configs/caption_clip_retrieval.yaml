@@ -20,3 +20,4 @@ output_dir: outputs/retrieval
 top_k: 10
 topk_csv: outputs/retrieval/caption_text_to_image_topk.csv
 metrics_json: outputs/retrieval/caption_retrieval_metrics.json
+contact_sheet_path: outputs/figures/caption_topk_contact_sheet.png

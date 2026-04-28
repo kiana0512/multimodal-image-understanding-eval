@@ -24,6 +24,25 @@ def rel(path: Path) -> str:
         return path.as_posix()
 
 
+def csv_counts(path: Path) -> tuple[int | None, int | None]:
+    """Return unique image count and row count for a manifest."""
+    if not path.exists():
+        return None, None
+    try:
+        import pandas as pd
+
+        df = pd.read_csv(path)
+        if "image_id" in df.columns:
+            image_count = int(df["image_id"].nunique())
+        elif "image_path" in df.columns:
+            image_count = int(df["image_path"].nunique())
+        else:
+            image_count = None
+        return image_count, int(len(df))
+    except Exception:
+        return None, None
+
+
 def find_oxford_pet_root(root: Path) -> Path | None:
     """Find an extracted Oxford-IIIT Pet directory without downloading anything."""
     if not root.exists():
@@ -44,23 +63,6 @@ def find_oxford_pet_root(root: Path) -> Path | None:
     return None
 
 
-def csv_image_count(path: Path) -> int | None:
-    """Return unique image count for a manifest when possible."""
-    if not path.exists():
-        return None
-    try:
-        import pandas as pd
-
-        df = pd.read_csv(path)
-        if "image_id" in df.columns:
-            return int(df["image_id"].nunique())
-        if "image_path" in df.columns:
-            return int(df["image_path"].nunique())
-    except Exception:
-        return None
-    return None
-
-
 def print_environment() -> None:
     """Print lightweight environment checks."""
     print("Environment:")
@@ -78,39 +80,67 @@ def print_dataset_status() -> None:
     """Print manifest and raw-data status."""
     raw_root = ROOT / "data/raw"
     processed_root = ROOT / "data/processed"
-    oxford_root = find_oxford_pet_root(ROOT / "data/raw/oxford_pet")
-
-    checks = [
-        ("Caption retrieval default manifest", ROOT / "data/processed/caption/caption_manifest.csv", status),
-        ("Caption image features", ROOT / "outputs/features/caption_image_features.npy", status),
-        ("Caption text features", ROOT / "outputs/features/caption_text_features.npy", status),
-        ("Caption Top-K CSV", ROOT / "outputs/retrieval/caption_text_to_image_topk.csv", status),
-        ("Caption retrieval metrics JSON", ROOT / "outputs/retrieval/caption_retrieval_metrics.json", status),
-        ("Oxford Pet processed manifest", ROOT / "data/processed/oxford_pet/oxford_pet_segmentation_manifest.csv", found),
-        ("Flickr30K manifest", ROOT / "data/processed/flickr30k/flickr30k_manifest.csv", found),
-        ("DiffusionDB metadata manifest", ROOT / "data/processed/diffusiondb/diffusiondb_metadata_manifest.csv", found),
-        ("DiffusionDB image quality manifest", ROOT / "data/processed/diffusiondb/diffusiondb_manifest.csv", found),
-        ("Game asset manifest", ROOT / "data/processed/game_assets/game_asset_manifest.csv", found),
-    ]
 
     print("\nDataset status:")
     print(f"- data/raw: {found(raw_root.exists())} ({rel(raw_root)})")
     print(f"- data/processed: {found(processed_root.exists())} ({rel(processed_root)})")
-    print(f"- ModelScope cache dir: {found((ROOT / 'data/cache/modelscope').exists())} (data/cache/modelscope)")
-    print(f"- HF cache dir: {found((ROOT / 'data/cache/huggingface').exists())} (data/cache/huggingface)")
-    print(f"- Oxford Pet raw data: {found(oxford_root is not None)}")
-    if oxford_root is not None:
-        print(f"  Detected at: {rel(oxford_root)}")
-    for name, path, formatter in checks:
-        print(f"- {name}: {formatter(path.exists())} ({rel(path)})")
+    print("\nOfficial COCO2014:")
+    coco_root = ROOT / "data/raw/coco2014"
+    coco_checks = [
+        ("val2014.zip", coco_root / "val2014.zip"),
+        ("train2014.zip", coco_root / "train2014.zip"),
+        ("annotations_trainval2014.zip", coco_root / "annotations_trainval2014.zip"),
+        ("val2014 extracted", coco_root / "val2014"),
+        ("train2014 extracted", coco_root / "train2014"),
+        ("captions_val2014.json", coco_root / "annotations/captions_val2014.json"),
+        ("captions_train2014.json", coco_root / "annotations/captions_train2014.json"),
+        ("caption manifest", ROOT / "data/processed/caption/caption_manifest.csv"),
+    ]
+    for name, path in coco_checks:
+        print(f"- {name}: {found(path.exists())} ({rel(path)})")
     caption_manifest = ROOT / "data/processed/caption/caption_manifest.csv"
-    image_count = csv_image_count(caption_manifest)
+    image_count, pair_count = csv_counts(caption_manifest)
     if image_count is not None:
-        print(f"- Caption manifest image count: {image_count}")
-        if image_count < 20:
-            print("  WARNING: fewer than 20 images is too small for a useful retrieval demo.")
-    print("- ModelScope COCO small slice: optional metadata/url sample, not the default retrieval dataset.")
-    print("- DiffusionDB: metadata-only is for prompt analysis; local-images is for image quality evaluation.")
+        print(f"- caption image count: {image_count}")
+    if pair_count is not None:
+        print(f"- caption pair count: {pair_count}")
+    if image_count is not None and image_count < 20:
+        print("  WARNING: fewer than 20 images is too small for a useful retrieval demo.")
+
+    print("\nOxford-IIIT Pet segmentation:")
+    oxford_root = find_oxford_pet_root(ROOT / "data/raw/oxford_pet")
+    oxford_checks = [
+        ("raw data", oxford_root),
+        ("segmentation manifest", ROOT / "data/processed/oxford_pet/oxford_pet_segmentation_manifest.csv"),
+        ("mask metrics CSV", ROOT / "outputs/segmentation_eval/oxford_pet_mask_metrics.csv"),
+        ("mask metrics summary", ROOT / "outputs/segmentation_eval/oxford_pet_mask_metrics_summary.csv"),
+    ]
+    for name, path in oxford_checks:
+        exists = path is not None and Path(path).exists()
+        display = rel(Path(path)) if path is not None else "data/raw/oxford_pet"
+        print(f"- {name}: {found(exists)} ({display})")
+
+    print("\nLocal AIGC asset quality:")
+    aigc_checks = [
+        ("game asset manifest", ROOT / "data/processed/game_assets/game_asset_manifest.csv"),
+        ("quality scores", ROOT / "outputs/quality_eval/game_asset_quality_scores.csv"),
+        ("badcases CSV", ROOT / "outputs/quality_eval/game_asset_badcases.csv"),
+        ("badcase report", ROOT / "outputs/quality_eval/game_asset_badcase_report.md"),
+    ]
+    for name, path in aigc_checks:
+        print(f"- {name}: {found(path.exists())} ({rel(path)})")
+
+    print("\nCaption retrieval outputs:")
+    output_checks = [
+        ("caption image features", ROOT / "outputs/features/caption_image_features.npy"),
+        ("caption text features", ROOT / "outputs/features/caption_text_features.npy"),
+        ("caption metadata", ROOT / "outputs/features/caption_metadata.csv"),
+        ("caption Top-K CSV", ROOT / "outputs/retrieval/caption_text_to_image_topk.csv"),
+        ("caption retrieval metrics JSON", ROOT / "outputs/retrieval/caption_retrieval_metrics.json"),
+        ("caption contact sheet", ROOT / "outputs/figures/caption_topk_contact_sheet.png"),
+    ]
+    for name, path in output_checks:
+        print(f"- {name}: {status(path.exists())} ({rel(path)})")
 
 
 def print_recommendations() -> None:
@@ -118,21 +148,23 @@ def print_recommendations() -> None:
     print(
         "\nRecommended next commands:\n"
         "\n"
-        "1. Recommended caption retrieval:\n"
-        "   python scripts/prepare_caption_dataset.py --source hf --dataset lambda/naruto-blip-captions --max-samples 500 --force\n"
+        "1. Quick COCO2014 val run:\n"
+        "   python scripts/download_coco2014_official.py --split val --download --extract\n"
+        "   python scripts/prepare_coco2014_caption.py --split val --max-samples 5000 --force\n"
         "   python scripts/run_pipeline.py --task caption_retrieval\n"
         "\n"
-        "2. Recommended CV segmentation:\n"
-        "   python scripts/prepare_oxford_pet.py --source auto --max-samples 500 --make-pseudo-masks\n"
+        "2. Full COCO2014 train+val run:\n"
+        "   python scripts/download_coco2014_official.py --split trainval --download --extract\n"
+        "   python scripts/prepare_coco2014_caption.py --split trainval --max-samples 20000 --force\n"
+        "   python scripts/run_pipeline.py --task caption_retrieval\n"
+        "\n"
+        "3. Oxford-IIIT Pet segmentation:\n"
+        "   python scripts/prepare_oxford_pet.py --source auto --max-samples 500 --make-pseudo-masks --force\n"
         "   python scripts/run_pipeline.py --task oxford_pet_segmentation\n"
         "\n"
-        "3. Recommended local AIGC quality:\n"
-        "   python scripts/prepare_local_game_assets.py --image-root <your_comfyui_outputs> --output data/processed/game_assets/game_asset_manifest.csv\n"
+        "4. Local AIGC asset quality:\n"
+        "   python scripts/prepare_local_game_assets.py --image-root D:/your_aigc_outputs --output data/processed/game_assets/game_asset_manifest.csv\n"
         "   python scripts/run_pipeline.py --task game_asset_quality\n"
-        "\n"
-        "4. DiffusionDB prompt metadata analysis:\n"
-        "   python scripts/prepare_diffusiondb_subset.py --mode metadata-only --max-samples 1000\n"
-        "   python scripts/analyze_prompts.py --manifest data/processed/diffusiondb/diffusiondb_metadata_manifest.csv --text-column prompt\n"
     )
 
 

@@ -21,9 +21,3 @@ dependencies:
   - torchaudio
   - pip:
       - open_clip_torch
-      - datasets
-      - modelscope
-      - oss2
-      - huggingface_hub
-      - transformers
-      - accelerate

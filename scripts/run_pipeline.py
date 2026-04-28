@@ -14,14 +14,14 @@ TASKS = {
             [
                 sys.executable,
                 "scripts/make_contact_sheet.py",
-                "--csv",
+                "--retrieval-csv",
                 "outputs/retrieval/caption_text_to_image_topk.csv",
-                "--image-column",
-                "image_path",
-                "--caption-column",
-                "query_text",
                 "--output",
                 "outputs/figures/caption_topk_contact_sheet.png",
+                "--num-queries",
+                "8",
+                "--top-k",
+                "5",
             ],
             [
                 sys.executable,
@@ -30,19 +30,17 @@ TASKS = {
                 "outputs/retrieval/caption_text_to_image_topk.csv",
                 "--retrieval-metrics-json",
                 "outputs/retrieval/caption_retrieval_metrics.json",
+                "--figures",
+                "outputs/figures/caption_topk_contact_sheet.png",
             ],
         ],
-        "prepare_hint": "python scripts/prepare_caption_dataset.py --source hf --dataset lambda/naruto-blip-captions --max-samples 500 --force",
+        "prepare_hint": "python scripts/prepare_coco2014_caption.py --split val --max-samples 5000 --force",
         "missing_help": """
 Please prepare a real image-caption dataset first.
 
-Recommended default HuggingFace Parquet dataset:
-python scripts/prepare_caption_dataset.py --source hf --dataset lambda/naruto-blip-captions --max-samples 500 --force
-
-Optional ModelScope metadata/url sample, not recommended as default benchmark:
-python scripts/prepare_caption_dataset.py --source modelscope --dataset coco_captions_small_slice --max-samples 500
-
-Then run:
+Recommended official COCO2014 Caption workflow:
+python scripts/download_coco2014_official.py --split val --download --extract
+python scripts/prepare_coco2014_caption.py --split val --max-samples 5000 --force
 python scripts/run_pipeline.py --task caption_retrieval
 """,
     },
@@ -52,42 +50,15 @@ python scripts/run_pipeline.py --task caption_retrieval
             [sys.executable, "scripts/run_segmentation_quality_eval.py", "--config", "configs/oxford_pet_segmentation_quality.yaml"],
             [sys.executable, "scripts/generate_report.py", "--segmentation-csv", "outputs/segmentation_eval/oxford_pet_mask_metrics.csv"],
         ],
-        "prepare_hint": "python scripts/prepare_oxford_pet.py --max-samples 200 --make-pseudo-masks",
+        "prepare_hint": "python scripts/prepare_oxford_pet.py --source auto --max-samples 500 --make-pseudo-masks --force",
         "missing_help": """
-This means Oxford Pet has not been prepared yet.
-
-Option A: real dataset, requires network or local raw data
-python scripts/prepare_oxford_pet.py --source auto --max-samples 200 --make-pseudo-masks
+Recommended Oxford-IIIT Pet segmentation workflow:
+python scripts/prepare_oxford_pet.py --source auto --max-samples 500 --make-pseudo-masks --force
 python scripts/run_pipeline.py --task oxford_pet_segmentation
 
-If download fails with SSL/URLError:
-- use --source local after manually extracting Oxford Pet into data/raw/oxford_pet
-- or see README.md
-""",
-    },
-    "diffusiondb_quality": {
-        "manifest": ROOT / "data/processed/diffusiondb/diffusiondb_manifest.csv",
-        "steps": [
-            [sys.executable, "scripts/run_aigc_quality_eval.py", "--config", "configs/diffusiondb_aigc_quality_eval.yaml"],
-            [sys.executable, "scripts/generate_report.py", "--quality-csv", "outputs/quality_eval/diffusiondb_aigc_quality_scores.csv"],
-        ],
-        "prepare_hint": "python scripts/prepare_diffusiondb_subset.py --mode local-images --local-root data/raw/diffusiondb_sample --max-samples 100",
-        "missing_help": """
-This means a local DiffusionDB image quality manifest has not been prepared yet.
-
-Default DiffusionDB mode is metadata-only prompt analysis, not image quality evaluation:
-python scripts/prepare_diffusiondb_subset.py --mode metadata-only --max-samples 1000
-python scripts/analyze_prompts.py --manifest data/processed/diffusiondb/diffusiondb_metadata_manifest.csv --text-column prompt
-
-For image quality evaluation, use local images:
-python scripts/prepare_diffusiondb_subset.py --mode local-images --local-root data/raw/diffusiondb_sample --max-samples 100
-python scripts/run_pipeline.py --task diffusiondb_quality
-
-Recommended AIGC quality default is local ComfyUI/SD output:
-python scripts/prepare_local_game_assets.py --image-root D:/RT/game-aigc-asset-workflow/outputs --output data/processed/game_assets/game_asset_manifest.csv
-python scripts/run_pipeline.py --task game_asset_quality
-
-DiffusionDB 2M/Large is very large and is not downloaded by default.
+If the dataset is already extracted locally:
+python scripts/prepare_oxford_pet.py --source local --local-root data/raw/oxford_pet --max-samples 500 --make-pseudo-masks --force
+python scripts/run_pipeline.py --task oxford_pet_segmentation
 """,
     },
     "game_asset_quality": {
@@ -96,15 +67,13 @@ DiffusionDB 2M/Large is very large and is not downloaded by default.
             [sys.executable, "scripts/run_aigc_quality_eval.py", "--config", "configs/game_asset_quality_eval.yaml"],
             [sys.executable, "scripts/generate_report.py", "--quality-csv", "outputs/quality_eval/game_asset_quality_scores.csv"],
         ],
-        "prepare_hint": "python scripts/prepare_local_game_assets.py --image-root D:/your_comfyui_outputs --output data/processed/game_assets/game_asset_manifest.csv",
+        "prepare_hint": "python scripts/prepare_local_game_assets.py --image-root D:/your_aigc_outputs --output data/processed/game_assets/game_asset_manifest.csv",
         "missing_help": """
-This means the local game asset manifest has not been prepared yet.
-
-Option A: scan your local ComfyUI/Stable Diffusion output directory
-python scripts/prepare_local_game_assets.py --image-root D:/your_comfyui_outputs --output data/processed/game_assets/game_asset_manifest.csv
+Recommended local AIGC asset quality workflow:
+python scripts/prepare_local_game_assets.py --image-root D:/your_aigc_outputs --output data/processed/game_assets/game_asset_manifest.csv
 python scripts/run_pipeline.py --task game_asset_quality
 
-Replace D:/your_comfyui_outputs with your own local image directory.
+Replace D:/your_aigc_outputs with your ComfyUI / Stable Diffusion / generated asset folder.
 """,
     },
 }
@@ -143,8 +112,7 @@ def main() -> None:
     """Run a named experiment pipeline without automatically downloading data."""
     parser = argparse.ArgumentParser(
         description=(
-            "Unified entry for the main experiment pipelines: caption_retrieval, "
-            "oxford_pet_segmentation, game_asset_quality, diffusiondb_quality."
+            "Unified entry for COCO2014 retrieval, Oxford Pet segmentation, and local AIGC asset quality pipelines."
         )
     )
     parser.add_argument("--task", required=True, choices=sorted(TASKS))
