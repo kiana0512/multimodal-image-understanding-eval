@@ -2,7 +2,22 @@
 from __future__ import annotations
 from pathlib import Path
 from datetime import datetime
+import json
 import pandas as pd
+
+def _markdown_table(df: pd.DataFrame) -> str:
+    """Render a small DataFrame as markdown without optional tabulate dependency."""
+    if df.empty:
+        return "Empty CSV."
+    text_df = df.astype(str)
+    columns = list(text_df.columns)
+    lines = [
+        "| " + " | ".join(columns) + " |",
+        "| " + " | ".join(["---"] * len(columns)) + " |",
+    ]
+    for _, row in text_df.iterrows():
+        lines.append("| " + " | ".join(row[col].replace("\n", " ") for col in columns) + " |")
+    return "\n".join(lines)
 
 def _table_from_csv(path: str | Path | None, max_rows: int = 10) -> str:
     if not path: return "Not provided."
@@ -10,9 +25,19 @@ def _table_from_csv(path: str | Path | None, max_rows: int = 10) -> str:
     if not p.exists(): return f"Not found: `{p}`"
     df=pd.read_csv(p)
     if df.empty: return "Empty CSV."
-    return df.head(max_rows).to_markdown(index=False)
+    return _markdown_table(df.head(max_rows))
 
-def build_markdown_report(title: str = "Experiment Report", retrieval_csv: str | Path | None = None, quality_csv: str | Path | None = None, segmentation_csv: str | Path | None = None, config_path: str | Path | None = None) -> str:
+def _json_metrics(path: str | Path | None) -> str:
+    if not path:
+        return "Not provided."
+    p = Path(path)
+    if not p.exists():
+        return f"Not found: `{p}`"
+    data = json.loads(p.read_text(encoding="utf-8"))
+    rows = [{"metric": key, "value": value} for key, value in data.items()]
+    return _markdown_table(pd.DataFrame(rows))
+
+def build_markdown_report(title: str = "Experiment Report", retrieval_csv: str | Path | None = None, quality_csv: str | Path | None = None, segmentation_csv: str | Path | None = None, config_path: str | Path | None = None, retrieval_metrics_json: str | Path | None = None) -> str:
     """Build a markdown report string from optional CSV outputs."""
     now=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     return f"""# {title}
@@ -28,6 +53,10 @@ Status: placeholder / demo result unless explicitly replaced by real experiment 
 ## Retrieval Results
 
 {_table_from_csv(retrieval_csv)}
+
+## Retrieval Metrics
+
+{_json_metrics(retrieval_metrics_json)}
 
 ## AIGC Quality Scores
 

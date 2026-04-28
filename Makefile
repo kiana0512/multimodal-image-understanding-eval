@@ -4,11 +4,14 @@ check:
 test:
 	python -m pytest
 
-toy:
-	python scripts/create_toy_placeholders.py
-	python scripts/run_aigc_quality_eval.py --config configs/aigc_quality_eval.yaml
-	python scripts/generate_report.py --quality-csv outputs/quality_eval/aigc_quality_scores.csv
+caption:
+	python scripts/prepare_caption_dataset.py --source hf --dataset lambda/naruto-blip-captions --max-samples 500 --force
+	python scripts/run_pipeline.py --task caption_retrieval
+
+prompts:
+	python scripts/prepare_diffusiondb_subset.py --mode metadata-only --max-samples 1000
+	python scripts/analyze_prompts.py --manifest data/processed/diffusiondb/diffusiondb_metadata_manifest.csv --text-column prompt
 
 oxford:
-	python scripts/prepare_oxford_pet.py --max-samples 100 --make-pseudo-masks
+	python scripts/prepare_oxford_pet.py --source auto --max-samples 100 --make-pseudo-masks
 	python scripts/run_pipeline.py --task oxford_pet_segmentation

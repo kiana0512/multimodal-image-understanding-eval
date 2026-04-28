@@ -9,5 +9,6 @@ matplotlib
 tqdm
 pyyaml
 rich
+oss2
 # Optional dependencies: open_clip_torch transformers faiss-cpu gradio
 pytest

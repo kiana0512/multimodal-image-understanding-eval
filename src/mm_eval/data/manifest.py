@@ -50,12 +50,3 @@ def build_image_folder_manifest(root: str | Path, output_csv: str | Path, split:
     if not rows: raise ValueError(f"No images found under {image_root}. Supported extensions: {sorted(IMAGE_EXTENSIONS)}")
     df=pd.DataFrame(rows); save_manifest(df, output_csv); return df
 
-def build_toy_manifest(output_csv: str | Path = "data/sample_manifest.csv") -> pd.DataFrame:
-    """Create a tiny manifest with expected toy image paths."""
-    rows=[
-        {"image_path":"data/toy_images/cat_001.jpg","text":"a cute cat sitting on the sofa","label":"cat","split":"train","source":"toy"},
-        {"image_path":"data/toy_images/dog_001.jpg","text":"a dog running on the grass","label":"dog","split":"val","source":"toy"},
-        {"image_path":"data/toy_images/sword_icon_001.png","text":"fantasy sword icon, clean ui","label":"ui_icon","split":"val","source":"toy"},
-        {"image_path":"data/toy_images/character_001.png","text":"anime game character concept art","label":"character","split":"val","source":"toy"},
-    ]
-    df=pd.DataFrame(rows); save_manifest(df, output_csv); return df

@@ -1,0 +1,22 @@
+manifest_path: data/processed/caption/caption_manifest.csv
+
+image_column: image_path
+text_column: text
+image_id_column: image_id
+caption_id_column: caption_id
+
+model_name: ViT-B-32
+pretrained: laion2b_s34b_b79k
+batch_size: 32
+device: auto
+normalize: true
+
+feature_dir: outputs/features
+image_feature_path: outputs/features/caption_image_features.npy
+text_feature_path: outputs/features/caption_text_features.npy
+metadata_path: outputs/features/caption_metadata.csv
+
+output_dir: outputs/retrieval
+top_k: 10
+topk_csv: outputs/retrieval/caption_text_to_image_topk.csv
+metrics_json: outputs/retrieval/caption_retrieval_metrics.json

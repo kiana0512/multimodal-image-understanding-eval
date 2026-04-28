@@ -1,132 +1,147 @@
 # Multimodal Image Understanding Eval
 
-A lightweight experimental platform for multimodal image understanding and AIGC image quality evaluation.
+一个用于图文检索、CV 分割质量评估和 AIGC 图片质量评估的小型实验仓库。核心流程是：准备 manifest -> 跑脚本 -> 生成 `outputs/` 结果。
 
-This repository is designed as a portfolio-ready, interview-friendly Python project for image-text matching, CLIP/VLM feature analysis, AIGC image quality screening, image retrieval, segmentation/pseudo-label quality evaluation, and lightweight CV baselines.
+## 默认实验线
 
-## Supported Real-Data Demos
+### 1. 图文检索 / CLIP / Top-K
 
-1. Flickr30K / COCO Caption: image-text retrieval.
-2. Oxford-IIIT Pet: classification and segmentation-quality evaluation.
-3. DiffusionDB subset: AIGC prompt-image quality evaluation.
-4. Local game asset outputs: ComfyUI / SD generated asset evaluation.
-
-## Why This Repo
-
-Real CV and AIGC workflows need more than a single demo. They need data manifests, preprocessing, batch inference, feature caching, retrieval, metrics, badcase mining, visualization, and reports. This repo provides a compact but extensible implementation of that workflow.
-
-## Features
-
-- Real dataset preparation scripts for Flickr30K, COCO Caption, Oxford-IIIT Pet, DiffusionDB subset and local game assets.
-- CSV manifest loading, validation, image path checks and toy manifest generation.
-- Optional OpenCLIP encoder wrapper for image/text feature extraction.
-- Cosine similarity, pairwise similarity matrix, Top-K retrieval export and retrieval metrics.
-- AIGC proxy quality metrics: CLIP score placeholder, blur, brightness, contrast, duplicate, resolution and aspect ratio checks.
-- Segmentation metrics: Dice, IoU, Precision, Recall, F1 and simplified Boundary F1.
-- Lightweight CV classification demo using torchvision backbones.
-- Markdown report generation and contact sheet visualization.
-
-## Pipeline
+默认数据集使用 HuggingFace Parquet 数据集：
 
 ```text
-Images / Prompts / Labels
-        ?
-Manifest Builder
-        ?
-Image & Text Preprocessing
-        ?
-CLIP / OpenCLIP Feature Extraction
-        ?
-Retrieval / Matching / Scoring
-        ?
-AIGC Quality Evaluation
-        ?
-Badcase Mining & Visualization
-        ?
-Markdown / HTML Report
+lambda/naruto-blip-captions
 ```
 
-## Installation
+它包含真实图片和 caption，不依赖旧式 HF dataset script，也不需要额外从 COCO URL 下载图片。
 
-Recommended conda environment:
-
-```bash
-conda env create -f environment.yml
-conda activate llm
-python scripts/check_env.py
-python -m pytest
+```powershell
+python scripts/prepare_caption_dataset.py --source hf --dataset lambda/naruto-blip-captions --max-samples 500 --force
+python scripts/run_pipeline.py --task caption_retrieval
 ```
 
-Minimal pip setup is also possible:
+输出：
 
-```bash
-pip install -r requirements.txt
-pip install -e .
+```text
+data/processed/caption/caption_manifest.csv
+outputs/features/caption_image_features.npy
+outputs/features/caption_text_features.npy
+outputs/features/caption_metadata.csv
+outputs/retrieval/caption_text_to_image_topk.csv
+outputs/retrieval/caption_retrieval_metrics.json
+outputs/figures/caption_topk_contact_sheet.png
+outputs/reports/experiment_report_*.md
 ```
 
-## Quick Start: Toy Demo
+### 2. CV 分类 / 分割伪标签质量评估
 
-```bash
-python scripts/create_toy_placeholders.py
-python scripts/run_aigc_quality_eval.py --config configs/aigc_quality_eval.yaml
-python scripts/generate_report.py --quality-csv outputs/quality_eval/aigc_quality_scores.csv
-```
+默认数据集继续使用 Oxford-IIIT Pet。
 
-## Real-Data Commands
-
-```bash
-python scripts/prepare_flickr30k_hf.py --max-samples 200
-python scripts/run_pipeline.py --task flickr30k_retrieval
-
-python scripts/prepare_oxford_pet.py --max-samples 200 --make-pseudo-masks
+```powershell
+python scripts/prepare_oxford_pet.py --source auto --max-samples 500 --make-pseudo-masks
 python scripts/run_pipeline.py --task oxford_pet_segmentation
+```
 
-python scripts/prepare_diffusiondb_subset.py --max-samples 100
-python scripts/run_pipeline.py --task diffusiondb_quality
+用于分类 baseline、GT mask、模拟 pseudo mask、Dice / IoU / Precision / Recall 分析。
 
-python scripts/prepare_local_game_assets.py --image-root D:/your_comfyui_outputs --output data/processed/game_assets/game_asset_manifest.csv
+### 3. AIGC 图片质量评估
+
+默认不再下载 DiffusionDB 图片。图片质量评估推荐使用本地 ComfyUI / Stable Diffusion 输出目录。
+
+```powershell
+python scripts/prepare_local_game_assets.py --image-root D:/RT/game-aigc-asset-workflow/outputs --output data/processed/game_assets/game_asset_manifest.csv
 python scripts/run_pipeline.py --task game_asset_quality
 ```
 
-## Dataset Format
+### 4. DiffusionDB prompt metadata 分析
 
-Image-text manifest:
+DiffusionDB 2M / Large 体量非常大，而且当前 `datasets>=4.0` 对旧式 `diffusiondb.py` loading script 不兼容，所以默认只做 metadata-only prompt 分析。
 
-```csv
-image_path,text,label,split,source,image_id,caption_id
-data/processed/flickr30k/images/000001.jpg,"a dog running on grass",image_caption,test,source,000001,0
+```powershell
+python scripts/prepare_diffusiondb_subset.py --mode metadata-only --max-samples 1000
+python scripts/analyze_prompts.py --manifest data/processed/diffusiondb/diffusiondb_metadata_manifest.csv --text-column prompt
 ```
 
-AIGC manifest:
+输出：
 
-```csv
-image_path,prompt,negative_prompt,style_tag,asset_type,seed,model_name,split,source
-data/processed/diffusiondb/images/000001.jpg,"fantasy sword icon","",unknown,ui_icon,1234,unknown,sample,hf
+```text
+data/processed/diffusiondb/diffusiondb_metadata_manifest.csv
+outputs/prompt_analysis/prompt_stats.csv
+outputs/prompt_analysis/prompt_word_freq.csv
+outputs/reports/prompt_analysis_report_*.md
 ```
 
-Segmentation manifest:
+## 可选 / Legacy 数据
 
-```csv
-image_path,gt_mask_path,pred_mask_path,split,dataset
-data/processed/oxford_pet/images/000001.jpg,data/processed/oxford_pet/masks/000001_gt.png,data/processed/oxford_pet/pseudo_masks/000001_pseudo.png,trainval,oxford_pet
+这些保留但不作为默认主线：
+
+- `modelscope/coco_captions_small_slice`
+- `modelscope/coco_2014_caption`
+- `nlphuji/flickr30k`
+- `poloclub/diffusiondb`
+
+为什么 `coco_captions_small_slice` 只生成少量图片？它是 ModelScope 小样本数据，实际下载的是 CSV 和 metadata，图片字段指向 COCO URL。如果 `images.cocodataset.org` SSL / timeout 失败，就只能 materialize 很少图片。它适合测试字段解析，不适合正式 CLIP Top-K 检索。
+
+如果一定要测试：
+
+```powershell
+python scripts/prepare_caption_dataset.py --source modelscope --dataset coco_captions_small_slice --max-samples 500
 ```
 
-## Output Files
+为什么不默认使用 DiffusionDB 图片？DiffusionDB 2M 约 TB 级，Large 更大；同时旧式 HF script 在新版 `datasets` 下不兼容。图片质量评估请使用本地生成图，或者手动准备 DiffusionDB 小图片子集后：
 
-- `outputs/retrieval/flickr30k_text_to_image_topk.csv`
-- `outputs/quality_eval/diffusiondb_aigc_quality_scores.csv`
-- `outputs/quality_eval/game_asset_quality_scores.csv`
-- `outputs/segmentation_eval/oxford_pet_mask_metrics.csv`
-- `outputs/reports/experiment_report_YYYYMMDD_HHMMSS.md`
+```powershell
+python scripts/prepare_diffusiondb_subset.py --mode local-images --local-root data/raw/diffusiondb_sample --max-samples 100
+python scripts/run_pipeline.py --task diffusiondb_quality
+```
 
-## Roadmap
+## 目录作用
 
-- Add human quality labels for AIGC score calibration.
-- Add detection and instance segmentation evaluation.
-- Add FAISS for larger-scale retrieval.
-- Add Gradio UI for demo presentation.
-- Extend game assets to multi-view 3D rendered images.
+- `configs/`：实验配置。
+- `scripts/`：命令行脚本。
+- `src/mm_eval/`：核心 Python 包。
+- `data/`：示例、原始数据和处理后 manifest。
+- `outputs/`：运行产物。
+- `tests/`：单元测试。
 
-## Disclaimer
+## 常用诊断
 
-This repository is an experimental platform. It does not include large-scale private datasets, commercial model weights, or fake benchmark results. Generated outputs, toy images and simulated pseudo masks are `placeholder`, `demo result`, `not yet run`, or `example output` unless explicitly backed by real experiment logs.
+```powershell
+python scripts/check_env.py
+python scripts/data_doctor.py
+python -m pytest
+```
+
+## 结果怎么看
+
+图文检索看：
+
+- `outputs/retrieval/caption_text_to_image_topk.csv`
+- `outputs/retrieval/caption_retrieval_metrics.json`
+- `outputs/figures/caption_topk_contact_sheet.png`
+
+重点指标：`recall_at_1`、`recall_at_5`、`recall_at_10`、`mrr`、`mean_rank`。
+
+分割评估看：
+
+- `outputs/segmentation_eval/*mask_metrics.csv`
+- `outputs/segmentation_eval/*mask_metrics_summary.csv`
+
+重点指标：`dice`、`iou`、`precision`、`recall`、`f1`。
+
+AIGC 质量看：
+
+- `outputs/quality_eval/*quality_scores.csv`
+- `outputs/quality_eval/*badcases.csv`
+
+重点字段：`overall_score`、`blur_score`、`brightness_score`、`contrast_score`、`resolution_score`、`badcase_reason`。
+
+## 不要提交到 GitHub
+
+```text
+data/raw/
+data/processed/
+data/cache/
+outputs/
+*.npy
+*.pth
+```

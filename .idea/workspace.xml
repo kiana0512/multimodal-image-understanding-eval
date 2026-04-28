@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="48649dd9-e3bd-4fed-955e-34600054ca44" name="更改" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/multimodal-image-understanding-eval.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/configs/aigc_quality_eval.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/configs/clip_retrieval.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/configs/coco_caption_clip_retrieval.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/configs/cv_classification_demo.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/configs/flickr30k_clip_retrieval.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/configs/game_asset_eval.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/configs/oxford_pet_classification.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/configs/oxford_pet_pseudo_label_quality.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/configs/segmentation_quality_eval.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/game_asset_template/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/game_asset_template/game_asset_manifest_template.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/sample_labels.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/sample_manifest.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/sample_prompts.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/sample_segmentation_pairs.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/toy_images/.gitkeep" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/toy_images/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/toy_images/cat_001.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/toy_images/character_001.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/toy_images/dog_001.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/toy_images/sword_icon_001.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/environment.yml" beforeDir="false" afterPath="$PROJECT_DIR$/environment.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/aigc_game_asset_eval_example.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/clip_retrieval_example.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/cv_classification_example.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/segmentation_quality_eval_example.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/build_manifest.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/check_env.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/check_env.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/create_toy_placeholders.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/extract_clip_features.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/extract_clip_features.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/generate_report.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/generate_report.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/make_contact_sheet.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/make_contact_sheet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/prepare_coco_caption_modelscope.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/prepare_diffusiondb_subset.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/prepare_diffusiondb_subset.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/prepare_flickr30k_hf.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/prepare_oxford_pet.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/prepare_oxford_pet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/run_cv_classification_demo.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/run_image_retrieval.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/run_oxford_pet_demo.ps1" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/run_pipeline.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/run_pipeline.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/run_text_image_retrieval.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/run_text_image_retrieval.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/run_toy_demo.ps1" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/mm_eval/aigc/badcase_miner.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/mm_eval/aigc/badcase_miner.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/mm_eval/data/manifest.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/mm_eval/data/manifest.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/mm_eval/evaluation/pseudo_label_metrics.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/mm_eval/evaluation/pseudo_label_metrics.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/mm_eval/evaluation/report_builder.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/mm_eval/evaluation/report_builder.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/mm_eval/evaluation/retrieval_metrics.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/mm_eval/evaluation/retrieval_metrics.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/mm_eval/retrieval/topk_export.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/mm_eval/retrieval/topk_export.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="EmbeddingIndexingInfo">
+    <option name="cachedIndexableFilesCount" value="120" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 5
+}]]></component>
+  <component name="ProjectId" id="3CxxJRI3HBhNhYdgH7an2tvDZe0" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "main",
+    "junie.onboarding.icon.badge.shown": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-PY-253.31033.139" />
+        <option value="bundled-python-sdk-2653e85de345-6d6dccd035ac-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-253.31033.139" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="默认任务">
+      <changelist id="48649dd9-e3bd-4fed-955e-34600054ca44" name="更改" comment="" />
+      <created>1777340949565</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1777340949565</updated>
+      <workItem from="1777340950816" duration="4671000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

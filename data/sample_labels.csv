@@ -1,5 +1,0 @@
-image_path,label,split,source
-data/toy_images/cat_001.jpg,cat,train,toy
-data/toy_images/dog_001.jpg,dog,val,toy
-data/toy_images/sword_icon_001.png,ui_icon,val,toy
-data/toy_images/character_001.png,character,val,toy
